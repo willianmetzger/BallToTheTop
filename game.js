@@ -100,19 +100,19 @@ const game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
       // Configure the controls!
     if (cursors.left.isDown) {
       player.body.velocity.x = -150
-  
       player.animations.play('left')
+
     } else if (cursors.right.isDown) {
       player.body.velocity.x = 150
-  
       player.animations.play('right')
+
     } else {
       // If no movement keys are pressed, stop the player
       player.animations.stop()
     }
   
       //  This allows the player to jump!
-    if (cursors.up.isDown && player.body.touching.down) {
+    if (player.body.touching.down) {
       player.body.velocity.y = -400
     }
       // Show an alert modal when score reaches 120
