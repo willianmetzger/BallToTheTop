@@ -1,4 +1,4 @@
-import Player from "./Classes/Player"
+//import Player from "./Classes/Player"
 
 // Initialize the Phaser Game object and set default game window size
 const game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
@@ -119,7 +119,7 @@ const game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
   
       //  This allows the player to jump!
     if (player.body.touching.down) {
-      player.body.velocity.y = -400
+      player.body.velocity.y = -450
     }
       // Show an alert modal when score reaches 120
     if (score === 120) {
