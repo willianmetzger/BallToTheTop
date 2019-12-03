@@ -1,3 +1,5 @@
+import Player from "./Classes/Player"
+
 // Initialize the Phaser Game object and set default game window size
 const game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
     preload: preload,
@@ -6,6 +8,7 @@ const game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
   
   // Declare shared variables at the top so all methods can access them
   let score = 0
+  let meters = 0;
   let scoreText
   let platforms
   let diamonds
@@ -18,6 +21,7 @@ const game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
     game.load.image('ground', 'Assets/platform.png')
     game.load.image('diamond', 'Assets/diamond.png')
     game.load.spritesheet('woof', 'Assets/woof.png', 32, 32)
+    //player = new Player(game)
   }
   
   function create () {
@@ -96,6 +100,8 @@ const game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
   
       //  Call callectionDiamond() if player overlaps with a diamond
     game.physics.arcade.overlap(player, diamonds, collectDiamond, null, this)
+
+
   
       // Configure the controls!
     if (cursors.left.isDown) {
