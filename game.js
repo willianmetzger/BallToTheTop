@@ -28,13 +28,13 @@ function preload () {
 function create () {
 
   //  Make the world larger than the actual canvas
-  game.world.setBounds(0, 0, 0, 650);
+  game.world.setBounds(0, 0, 0, 3000);
 
     //  We're going to be using physics, so enable the Arcade Physics system
   game.physics.startSystem(Phaser.Physics.ARCADE)
 
     //  A simple background for our game
-  game.add.tileSprite(0, 0, 1400, 600, 'sky')
+  game.add.tileSprite(0, 0, 3000, 3000, 'sky')
   
     //  The platforms group contains the ground and the 2 ledges we can jump on
   platforms = game.add.group()
@@ -51,7 +51,7 @@ function create () {
     //  This stops it from falling away when you jump on it
   ground.body.immovable = true
   let ledge;
-  for (var i = 0; i < 4; i++)
+  for (var i = 0; i < 30; i++)
   {
     ledge = platforms.create(game.world.randomX, game.world.randomY, 'ground')
     ledge.body.immovable = true
@@ -66,6 +66,7 @@ function create () {
     // The player and its settings
   player = game.add.sprite(32, game.world.height - 150, 'woof')
 
+  player.anchor.setTo(0.5, 0.5);
     //  We need to enable physics on the player
   game.physics.arcade.enable(player)
     //  Player physics properties. Give the little guy a slight bounce.
