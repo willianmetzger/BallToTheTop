@@ -1,0 +1,13 @@
+{
+    "players_count": 3,
+    "players_obj": [{
+        "player": "Fulano",
+        "score": 100
+        }, {
+        "player": "Beltrano",
+        "score": 50 
+        }, {
+        "player": "Ciclano",
+        "score": 20
+    }]
+}
