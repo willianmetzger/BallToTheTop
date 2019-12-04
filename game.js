@@ -1,7 +1,10 @@
 //import Player from "./Classes/Player"
 
+let height = 800;
+let width = 600;
+
 // Initialize the Phaser Game object and set default game window size
-const game = new Phaser.Game(800, 600, Phaser.CANVAS, '', {
+const game = new Phaser.Game(height, width, Phaser.CANVAS, 'Ball To The Top', {
   preload: preload,
   create: create,
   update: update })
@@ -14,14 +17,17 @@ let platforms
 let diamonds
 let cursors
 let player
+let pause_label
+let menu
 
 function preload () {
   // Load & Define our game assets
   game.stage.backgroundColor = '#00FFFF';
-  game.load.image('sky', 'Assets/sky.png')
-  game.load.image('ground', 'Assets/platform.png')
-  game.load.image('diamond', 'Assets/diamond.png')
-  game.load.spritesheet('woof', 'Assets/woof.png', 32, 32)
+  game.load.image('sky', 'Assets/sky.png');
+  game.load.image('ground', 'Assets/platform.png');
+  game.load.image('diamond', 'Assets/diamond.png');
+  game.load.spritesheet('woof', 'Assets/woof.png', 32, 32);
+  game.load.image('menu', 'Assets/number-buttons-90x90.png', 270, 180);
   //player = new Player(game)
 }
 
@@ -35,7 +41,7 @@ function create () {
 
     //  A simple background for our game
   game.add.tileSprite(0, 0, 3000, 3000, 'sky')
-  
+
     //  The platforms group contains the ground and the 2 ledges we can jump on
   platforms = game.add.group()
 
@@ -55,6 +61,7 @@ function create () {
   {
     ledge = platforms.create(game.world.randomX, game.world.randomY, 'ground')
     ledge.body.immovable = true
+    ledge.body.checkCollision.down = false;
   }
     //  Now let's create two ledges
   // let ledge = platforms.create(400, 450, 'ground')
@@ -85,21 +92,24 @@ function create () {
   diamonds.enableBody = true
 
     //  Create 12 diamonds evenly spaced apart
-  // for (var i = 0; i < 12; i++) {
-  //   let diamond = diamonds.create(i * 70, 0, 'diamond')
+  for (var i = 0; i < 12; i++) {
+    let diamond = diamonds.create(i * 70, 0, 'diamond')
 
-  //     //  Drop em from the sky and bounce a bit
-  //   diamond.body.gravity.y = 1000
-  //   diamond.body.bounce.y = 0.3 + Math.random() * 0.2
-  // }
+      //  Drop em from the sky and bounce a bit
+    diamond.body.gravity.y = 1000
+    diamond.body.bounce.y = 0.3 + Math.random() * 0.2
+  }
 
     //  Create the score text
-  scoreText = game.add.text(16, 16, '', { fontSize: '32px', fill: '#000' })
+  scoreText = game.add.text(16, 16, '', { fontSize: '32px', fill: '#000', align: "center" });
+  scoreText.fixedToCamera = true;
+  //scoreText.cameraOffset.setTo(200, 500);
 
   game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON);
 
     //  And bootstrap our controls
   cursors = game.input.keyboard.createCursorKeys()
+  pauseMenu();
 }
 
 function update () {
@@ -140,6 +150,68 @@ function update () {
     alert('You win!')
     score = 0
   }
+}
+
+function mainMenu() {
+  game.state.add("")
+}
+
+function pauseMenu() {
+  // Create a label to use as a button
+  pause_label = game.add.text(width + 100, 20, 'Pause', { font: '24px Arial', fill: '#fff' });
+  pause_label.fixedToCamera = true;
+  pause_label.inputEnabled = true;
+  pause_label.events.onInputUp.add(function () {
+      // When the paus button is pressed, we pause the game
+      game.paused = true;
+
+      // Then add the menu
+      menu = game.add.sprite(width / 2, height / 2, 'menu');
+      menu.fixedToCamera = true;
+      menu.anchor.setTo(0.5, 0.5);
+
+      // And a label to illustrate which menu item was chosen. (This is not necessary)
+      choiseLabel = game.add.text(width / 2, height - 150, 'Click outside menu to continue', { font: '30px Arial', fill: '#fff' });
+      choiseLabel.fixedToCamera = true;
+      choiseLabel.anchor.setTo(0.5, 0.5);
+  });
+
+  // Add a input listener that can help us return from being paused
+  game.input.onDown.add(unpause, self);
+
+  // And finally the method that handels the pause menu
+  function unpause(event){
+    // Only act if paused
+    if(game.paused){
+        // Calculate the corners of the menu
+        var x1 = width / 2 - 270 / 2, x2 = width / 2 + 270 / 2,
+            y1 = height / 2 - 180 / 2, y2 = height / 2 + 180 / 2;
+
+        // Check if the click was inside the menu
+        if(event.x > x1 && event.x < x2 && event.y > y1 && event.y < y2 ){
+            // The choicemap is an array that will help us see which item was clicked
+            var choisemap = ['one', 'two', 'three', 'four', 'five', 'six'];
+
+            // Get menu local coordinates for the click
+            var x = event.x - x1,
+                y = event.y - y1;
+
+            // Calculate the choice 
+            var choise = Math.floor(x / 90) + 3*Math.floor(y / 90);
+
+            // Display the choice
+            choiseLabel.text = 'You chose menu item: ' + choisemap[choise];
+        }
+        else{
+            // Remove the menu and the label
+            menu.destroy();
+            choiseLabel.destroy();
+
+            // Unpause the game
+            game.paused = false;
+        }
+    }
+  };
 }
 
 function collectDiamond (player, diamond) {
