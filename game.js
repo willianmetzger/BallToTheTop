@@ -1,16 +1,16 @@
 //import Player from "./Classes/Player"
 
-let height = 800;
 let width = 600;
+let height = 800;
 
 // Initialize the Phaser Game object and set default game window size
-const game = new Phaser.Game(height, width, Phaser.CANVAS, 'Ball To The Top', {
+const game = new Phaser.Game(width, height, Phaser.CANVAS, 'Ball To The Top', {
   preload: preload,
   create: create,
   update: update })
 
 // Declare shared variables at the top so all methods can access them
-let score = 0
+let score = 0;
 let meters = 0;
 let scoreText
 let platforms
@@ -111,7 +111,7 @@ function create () {
 
   fx.addMarker('jump_bit', 0, 1.0);
 
-  game.camera.follow(player, Phaser.Camera.FOLLOW_PLATFORMER);
+  game.camera.y = player.y;
 
     //  And bootstrap our controls
   cursors = game.input.keyboard.createCursorKeys()
@@ -157,6 +157,15 @@ function update () {
     alert('You win!')
     score = 0
   }
+
+  if(player.y <= (game.camera.y + (height/2)))
+  {
+    game.camera.follow(player, Phaser.Camera.FOLLOW_TOPDOWN);
+  }
+  else{
+    game.camera.follow(null);
+  }
+
 }
 
 function mainMenu() {
@@ -165,7 +174,7 @@ function mainMenu() {
 
 function pauseMenu() {
   // Create a label to use as a button
-  pause_label = game.add.text(width + 100, 20, 'Pause', { font: '24px Arial', fill: '#fff' });
+  pause_label = game.add.text(width*0.85, height*0.02, 'Pause', {align: 'center', font: '24px Arial', fill: '#fff' });
   pause_label.fixedToCamera = true;
   pause_label.inputEnabled = true;
   pause_label.events.onInputUp.add(function () {
