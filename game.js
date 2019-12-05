@@ -105,7 +105,7 @@ function create () {
   scoreText.fixedToCamera = true;
   //scoreText.cameraOffset.setTo(200, 500);
 
-  game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON);
+  game.camera.follow(player, Phaser.Camera.FOLLOW_PLATFORMER);
 
     //  And bootstrap our controls
   cursors = game.input.keyboard.createCursorKeys()
