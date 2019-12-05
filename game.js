@@ -28,6 +28,7 @@ function preload () {
   game.load.image('diamond', 'Assets/diamond.png');
   game.load.spritesheet('woof', 'Assets/woof.png', 32, 32);
   game.load.image('menu', 'Assets/number-buttons-90x90.png', 270, 180);
+  game.load.audio('sfx', 'Assets/sounds/jump_bit.wav');
   //player = new Player(game)
 }
 
@@ -105,6 +106,11 @@ function create () {
   scoreText.fixedToCamera = true;
   //scoreText.cameraOffset.setTo(200, 500);
 
+  // Create sounds
+  fx = game.add.audio('sfx');
+
+  fx.addMarker('jump_bit', 0, 1.0);
+
   game.camera.follow(player, Phaser.Camera.FOLLOW_PLATFORMER);
 
     //  And bootstrap our controls
@@ -144,6 +150,7 @@ function update () {
     //  This allows the player to jump!
   if (player.body.touching.down) {
     player.body.velocity.y = -800
+    fx.play('jump_bit',0.5);
   }
     // Show an alert modal when score reaches 120
   if (score === 120) {
