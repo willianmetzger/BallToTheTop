@@ -19,6 +19,7 @@ let cursors
 let player
 let pause_label
 let menu
+let deathText
 
 function preload () {
   // Load & Define our game assets
@@ -104,6 +105,7 @@ function create () {
     //  Create the score text
   scoreText = game.add.text(16, 16, '', { fontSize: '32px', fill: '#000', align: "center" });
   scoreText.fixedToCamera = true;
+  scoreText.text = 'Score: ' + score;
   //scoreText.cameraOffset.setTo(200, 500);
 
   // Create sounds
@@ -116,6 +118,9 @@ function create () {
     //  And bootstrap our controls
   cursors = game.input.keyboard.createCursorKeys()
   pauseMenu();
+
+  game.state.add('Over');
+  game.state.add('Play');
 }
 
 function update () {
@@ -130,8 +135,6 @@ function update () {
 
     //  Call callectionDiamond() if player overlaps with a diamond
   game.physics.arcade.overlap(player, diamonds, collectDiamond, null, this)
-
-
 
     // Configure the controls!
   if (cursors.left.isDown) {
@@ -158,12 +161,27 @@ function update () {
     score = 0
   }
 
+    // Camera follow
   if(player.y <= (game.camera.y + (height/2)))
   {
     game.camera.follow(player, Phaser.Camera.FOLLOW_TOPDOWN);
   }
-  else{
+  else
+  {
     game.camera.follow(null);
+  }
+
+    // Player death outside camera
+  if  (player.y > game.camera.y + height)
+  {
+      deathText = game.add.text(width * 0.42, height * 0.42, 'You Died', { fontSize: '32px', fill: '#000', align: "center" });
+      deathText.fixedToCamera = true;
+      gameOver();
+  }
+
+  if(game.state == 'Over')
+  {
+    restart();
   }
 
 }
@@ -237,4 +255,21 @@ function collectDiamond (player, diamond) {
     //  And update the score
   score += 10
   scoreText.text = 'Score: ' + score
+}
+
+
+let gameOver = function() 
+{
+  player.kill();
+  game.state.start('Over');       
+  this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+  label = game.add.text(width / 2 , height / 2, 'Score: '+score+'\nGAME OVER\nPress SPACE to restart',{ font: '22px Lucida Console', fill: '#fff', align: 'center'});    
+  label.anchor.setTo(0.5, 0.5);  
+}
+
+let restart = function () 
+{
+  score = 0; 
+  if (this.spacebar.isDown)      
+    game.state.start('Play');   
 }
