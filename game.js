@@ -30,6 +30,7 @@ ProtoGame.State.prototype =
     this.game.stage.backgroundColor = '#00FFFF';
     this.game.load.image('sky', 'Assets/sky.png');
     this.game.load.image('ground', 'Assets/platform.png');
+    this.game.load.image('breakingPlatform', 'Assets/breakingPlatform.png');
     this.game.load.image('diamond', 'Assets/diamond.png');
     this.game.load.spritesheet('woof', 'Assets/woof.png', 32, 32);
     this.game.load.image('menu', 'Assets/number-buttons-90x90.png', 270, 180);
@@ -40,13 +41,13 @@ ProtoGame.State.prototype =
   create: function () {
 
     //  Make the world larger than the actual canvas
-    this.game.world.setBounds(0, 0, 0, 3000);
+    this.game.world.setBounds(0, 0, 0, 6000);
 
       //  We're going to be using physics, so enable the Arcade Physics system
     this.game.physics.startSystem(Phaser.Physics.ARCADE)
 
       //  A simple background for our game
-    this.game.add.tileSprite(0, 0, 3000, 3000, 'sky')
+    this.game.add.tileSprite(0, 0, 6000, 6000, 'sky')
 
       //  The platforms group contains the ground and the 2 ledges we can jump on
     this.platforms = this.game.add.group()
@@ -76,9 +77,10 @@ ProtoGame.State.prototype =
     // this.ledge.body.immovable = false
 
     for (var i = 0; i < 50; i++) {
-      this.fallLedges = this.falsePlatforms.create(this.game.world.randomX, this.game.world.randomY, 'ground');
+      this.fallLedges = this.falsePlatforms.create(this.game.world.randomX, this.game.world.randomY, 'breakingPlatform');
       this.fallLedges.body.immovable = true;
       this.fallLedges.body.checkCollision.down = false;
+      //this.fallLedges.body.tint = 0xff00ff;
     }
       // The player and its settings
     this.player = this.game.add.sprite(32, this.game.world.height - 150, 'woof')
@@ -138,13 +140,12 @@ ProtoGame.State.prototype =
 
       //  Setup collisions for the player, diamonds, and our platforms
     this.game.physics.arcade.collide(this.player, this.platforms)
-    this.game.physics.arcade.collide(this.player, this.falsePlatforms)
+    this.game.physics.arcade.collide(this.player, this.falsePlatforms, this.deactivatePlatform)
     this.game.physics.arcade.collide(this.diamonds, this.platforms)
     this.game.physics.arcade.collide(this.diamonds, this.falsePlatforms)
 
       //  Call callectionDiamond() if player overlaps with a diamond
     this.game.physics.arcade.overlap(this.player, this.diamonds, this.collectDiamond, null, this)
-    this.game.physics.arcade.overlap(this.player, this.falsePlatforms, this.deactivatePlatform, null, this)
 
       // Configure the controls!
     if (this.cursors.left.isDown) {
@@ -197,9 +198,10 @@ ProtoGame.State.prototype =
   deactivatePlatform: function(player, ledge) {
     console.log('entrou');
     ledge.body.immovable = false;
+    ledge.body.gravity.y = 1000
   },
 
-  test: function() {
+  pauseGame: function() {
     game.paused = true;
     console.log("pause");
     // Then add the menu
@@ -254,7 +256,7 @@ ProtoGame.State.prototype =
     this.pause_label.inputEnabled = true;
     
     // When the paus button is pressed, we pause the game
-    this.pause_label.events.onInputUp.add(this.test);
+    this.pause_label.events.onInputUp.add(this.pauseGame);
 
     // Add a input listener that can help us return from being paused
     this.game.input.onDown.add(this.unpause, self);
