@@ -17,6 +17,10 @@ ProtoGame.State = function (game){
   this.pause_label
   this.menu
   this.deathText
+  this.fallLedges;
+  this.falsePlatforms;
+  this.minY = 100;
+  this.minX = 100;
 }
 
 ProtoGame.State.prototype =
@@ -46,9 +50,11 @@ ProtoGame.State.prototype =
 
       //  The platforms group contains the ground and the 2 ledges we can jump on
     this.platforms = this.game.add.group()
+    this.falsePlatforms = this.game.add.group();
 
       //  We will enable physics for any object that is created in this group
     this.platforms.enableBody = true
+    this.falsePlatforms.enableBody = true;
 
       // Here we create the ground.
     this.ground = this.platforms.create(0, this.game.world.height - 64, 'ground')
@@ -59,19 +65,21 @@ ProtoGame.State.prototype =
       //  This stops it from falling away when you jump on it
     this.ground.body.immovable = true
     this.ledge;
-    for (var i = 0; i < 30; i++)
+    for (var i = 0; i < 15; i++)
     {
       this.ledge = this.platforms.create(this.game.world.randomX, this.game.world.randomY, 'ground')
       this.ledge.body.immovable = true
       this.ledge.body.checkCollision.down = false;
     }
-      //  Now this.'s create two ledges
-    // this. ledge = platforms.create(400, 450, 'ground')
-    // ledge.body.immovable = true
 
-    // ledge = platforms.create(-75, 350, 'ground')
-    // ledge.body.immovable = false
+    // this.ledge = this.platforms.create(-75, 350, 'ground')
+    // this.ledge.body.immovable = false
 
+    for (var i = 0; i < 50; i++) {
+      this.fallLedges = this.falsePlatforms.create(this.game.world.randomX, this.game.world.randomY, 'ground');
+      this.fallLedges.body.immovable = true;
+      this.fallLedges.body.checkCollision.down = false;
+    }
       // The player and its settings
     this.player = this.game.add.sprite(32, this.game.world.height - 150, 'woof')
 
@@ -130,10 +138,13 @@ ProtoGame.State.prototype =
 
       //  Setup collisions for the player, diamonds, and our platforms
     this.game.physics.arcade.collide(this.player, this.platforms)
+    this.game.physics.arcade.collide(this.player, this.falsePlatforms)
     this.game.physics.arcade.collide(this.diamonds, this.platforms)
+    this.game.physics.arcade.collide(this.diamonds, this.falsePlatforms)
 
       //  Call callectionDiamond() if player overlaps with a diamond
     this.game.physics.arcade.overlap(this.player, this.diamonds, this.collectDiamond, null, this)
+    this.game.physics.arcade.overlap(this.player, this.falsePlatforms, this.deactivatePlatform, null, this)
 
       // Configure the controls!
     if (this.cursors.left.isDown) {
@@ -181,6 +192,11 @@ ProtoGame.State.prototype =
 
   mainMenu: function() {
     this.game.state.add("")
+  },
+
+  deactivatePlatform: function(player, ledge) {
+    console.log('entrou');
+    ledge.body.immovable = false;
   },
 
   test: function() {
