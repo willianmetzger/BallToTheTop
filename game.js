@@ -251,21 +251,22 @@ function collectDiamond (player, diamond) {
 }
 
 
-    let gameOver = function() 
-    {
-      player.kill();
-      this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-      if(this.spaceKey.isDown)
-      {
-        restart();
-        label = game.add.text(width / 2 , height / 2, 'Score: '+score+'\nGAME OVER\nPress SPACE to restart',{ font: '22px Lucida Console', fill: '#fff', align: 'center'}); 
-        label.fixedToCamera = true;   
-        label.anchor.setTo(0.5, 0.5);  
-      }
-    }
+function gameOver()   
+{
+  player.kill();
+  this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+  label = game.add.text(width / 2 , height / 2, 'Score: '+score+'\nGAME OVER\nPress SPACE to restart',{ font: '22px Lucida Console', fill: '#fff', align: 'center'}); 
+  label.fixedToCamera = true;   
+  label.anchor.setTo(0.5, 0.5);  
+  if(this.spaceKey.isDown)
+  {
+    restart();
+    
+  }
+}
 
-    let restart = function () 
-    {
-      score = 0; 
-      create();  
-    }
+function restart() 
+{
+  score = 0; 
+  create(); 
+}
