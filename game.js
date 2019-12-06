@@ -116,11 +116,10 @@ function create () {
   game.camera.y = player.y;
 
     //  And bootstrap our controls
-  cursors = game.input.keyboard.createCursorKeys()
+  cursors = game.input.keyboard.createCursorKeys();
   pauseMenu();
 
-  game.state.add('Over');
-  game.state.add('Play');
+  game.camera.y = player.y;
 }
 
 function update () {
@@ -178,12 +177,6 @@ function update () {
       deathText.fixedToCamera = true;
       gameOver();
   }
-
-  if(game.state == 'Over')
-  {
-    restart();
-  }
-
 }
 
 function mainMenu() {
@@ -258,18 +251,21 @@ function collectDiamond (player, diamond) {
 }
 
 
-let gameOver = function() 
-{
-  player.kill();
-  game.state.start('Over');       
-  this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-  label = game.add.text(width / 2 , height / 2, 'Score: '+score+'\nGAME OVER\nPress SPACE to restart',{ font: '22px Lucida Console', fill: '#fff', align: 'center'});    
-  label.anchor.setTo(0.5, 0.5);  
-}
+    let gameOver = function() 
+    {
+      player.kill();
+      this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+      if(this.spaceKey.isDown)
+      {
+        restart();
+        label = game.add.text(width / 2 , height / 2, 'Score: '+score+'\nGAME OVER\nPress SPACE to restart',{ font: '22px Lucida Console', fill: '#fff', align: 'center'}); 
+        label.fixedToCamera = true;   
+        label.anchor.setTo(0.5, 0.5);  
+      }
+    }
 
-let restart = function () 
-{
-  score = 0; 
-  if (this.spacebar.isDown)      
-    game.state.start('Play');   
-}
+    let restart = function () 
+    {
+      score = 0; 
+      create();  
+    }
