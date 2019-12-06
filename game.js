@@ -59,9 +59,37 @@ ProtoGame.State.prototype =
       //  This stops it from falling away when you jump on it
     this.ground.body.immovable = true
     this.ledge;
-    for (var i = 0; i < 30; i++)
+    var lastY = 0, lastX = 0;
+    for (var i = 0; i < 15; i++)
     {
-      this.ledge = this.platforms.create(this.game.world.randomX, this.game.world.randomY, 'ground')
+      var newX, newY;
+
+      if (lastX == 0) {
+        newX = this.game.world.randomX
+        lastX = newX;
+      } else {
+        console.log('entrou');
+        while((newX - lastX) > this.minX) {
+          newX = this.game.world.randomX
+          console.log('aaa')
+        }
+        lastX = newX;
+      }
+
+      if (lastY == 0) {
+        newY = this.game.world.randomY
+        lastY = newY;
+        console.log('aaaa');
+      } else {
+        console.log('bbbb');
+        while((newY - lastY) > this.minY) {
+          newY = this.game.world.randomY
+        }
+        lastY = newY;
+      }
+
+
+      this.ledge = this.platforms.create(newX, newY, 'ground')
       this.ledge.body.immovable = true
       this.ledge.body.checkCollision.down = false;
     }
@@ -72,6 +100,11 @@ ProtoGame.State.prototype =
     // ledge = platforms.create(-75, 350, 'ground')
     // ledge.body.immovable = false
 
+    // for (var i = 0; i < 50; i++) {
+    //   this.fallLedges = this.falsePlatforms.create(this.game.world.randomX, this.game.world.randomY, 'ground');
+    //   this.fallLedges.body.immovable = true;
+    //   this.fallLedges.body.checkCollision.down = false;
+    // }
       // The player and its settings
     this.player = this.game.add.sprite(32, this.game.world.height - 150, 'woof')
 
