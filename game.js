@@ -183,67 +183,70 @@ ProtoGame.State.prototype =
     this.game.state.add("")
   },
 
+  test: function() {
+    game.paused = true;
+    console.log("pause");
+    // Then add the menu
+    menu = game.add.sprite(width / 2, height / 2, 'menu');
+    menu.fixedToCamera = true;
+    menu.anchor.setTo(0.5, 0.5);
+
+    // And a label to illustrate which menu item was chosen. (This is not necessary)
+    choiseLabel = game.add.text(width / 2, height - 150, 'Click outside menu to continue', { font: '30px Arial', fill: '#fff' });
+    choiseLabel.fixedToCamera = true;
+    choiseLabel.anchor.setTo(0.5, 0.5);
+  },
+
+  // And finally the method that handels the pause menu
+  unpause: function(event){
+    // Only act if paused
+    if(game.paused){
+        // Calculate the corners of the menu
+        var x1 = width / 2 - 270 / 2, x2 = width / 2 + 270 / 2,
+            y1 = height / 2 - 180 / 2, y2 = height / 2 + 180 / 2;
+
+        // Check if the click was inside the menu
+        if(event.x > x1 && event.x < x2 && event.y > y1 && event.y < y2 ){
+            // The choicemap is an array that will help us see which item was clicked
+            var choisemap = ['one', 'two', 'three', 'four', 'five', 'six'];
+
+            // Get menu local coordinates for the click
+            var x = event.x - x1,
+                y = event.y - y1;
+
+            // Calculate the choice 
+            var choise = Math.floor(x / 90) + 3*Math.floor(y / 90);
+
+            // Display the choice
+            this.choiseLabel.text = 'You chose menu item: ' + choisemap[choise];
+        }
+        else{
+            // Remove the menu and the label
+            menu.destroy();
+            choiseLabel.destroy();
+
+            // Unpause the game
+            game.paused = false;
+        }
+    }
+  },
+
   pauseMenu:function () {
     // Create a label to use as a button
     this.pause_label = this.game.add.text(width*0.85, height*0.02, 'Pause', {align: 'center', font: '24px Arial', fill: '#fff' });
     this.pause_label.fixedToCamera = true;
     this.pause_label.inputEnabled = true;
-    this.pause_label.events.onInputUp.add(function (game = this.game) {
-        // When the paus button is pressed, we pause the game
-        this.game.paused = true;
-
-        // Then add the menu
-        this.menu = this.game.add.sprite(width / 2, height / 2, 'menu');
-        this.menu.fixedToCamera = true;
-        this.menu.anchor.setTo(0.5, 0.5);
-
-        // And a label to illustrate which menu item was chosen. (This is not necessary)
-        this.choiseLabel = this.game.add.text(width / 2, height - 150, 'Click outside menu to continue', { font: '30px Arial', fill: '#fff' });
-        this.choiseLabel.fixedToCamera = true;
-        this.choiseLabel.anchor.setTo(0.5, 0.5);
-    });
+    
+    // When the paus button is pressed, we pause the game
+    this.pause_label.events.onInputUp.add(this.test);
 
     // Add a input listener that can help us return from being paused
-    this.game.input.onDown.add(unpause, self);
-
-    // And finally the method that handels the pause menu
-    function unpause(event, game = this.game){
-      // Only act if paused
-      if(this.game.paused){
-          // Calculate the corners of the menu
-          var x1 = width / 2 - 270 / 2, x2 = width / 2 + 270 / 2,
-              y1 = height / 2 - 180 / 2, y2 = height / 2 + 180 / 2;
-
-          // Check if the click was inside the menu
-          if(event.x > x1 && event.x < x2 && event.y > y1 && event.y < y2 ){
-              // The choicemap is an array that will help us see which item was clicked
-              var choisemap = ['one', 'two', 'three', 'four', 'five', 'six'];
-
-              // Get menu local coordinates for the click
-              var x = event.x - x1,
-                  y = event.y - y1;
-
-              // Calculate the choice 
-              var choise = Math.floor(x / 90) + 3*Math.floor(y / 90);
-
-              // Display the choice
-              this.choiseLabel.text = 'You chose menu item: ' + choisemap[choise];
-          }
-          else{
-              // Remove the menu and the label
-              this.menu.destroy();
-              this.choiseLabel.destroy();
-
-              // Unpause the game
-              this.game.paused = false;
-          }
-      }
-    };
+    this.game.input.onDown.add(this.unpause, self);
   },
 
   collectDiamond:  function (player, diamond) {
       // Removes the diamond from the screen
-      this.diamond.kill()
+      diamond.kill()
 
       //  And update the score
       this.score += 10
