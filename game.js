@@ -264,7 +264,6 @@ ProtoGame.State.prototype =
     if(this.spaceKey.isDown)
     {
       this.restart();
-      
     }
   },
 
