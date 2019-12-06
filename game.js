@@ -66,9 +66,26 @@ ProtoGame.State.prototype =
       //  This stops it from falling away when you jump on it
     this.ground.body.immovable = true
     this.ledge;
+    var lastY = 0;
     for (var i = 0; i < 15; i++)
     {
-      this.ledge = this.platforms.create(this.game.world.randomX, this.game.world.randomY, 'ground')
+      var newY;
+
+      if (lastY == 0) {
+        newY = this.game.world.height - 250;
+        lastY = newY;
+        //console.log('aaaa');
+      } else {
+        var num = (this.game.world.randomY % 3 * -100);
+        //console.log(num)
+        newY = lastY + num;
+        // while((newY - lastY) > this.minY) {
+        //   newY = this.game.world.randomY
+        // }
+        lastY = newY;
+      }
+
+      this.ledge = this.platforms.create(this.game.world.randomX, newY, 'ground')
       this.ledge.body.immovable = true
       this.ledge.body.checkCollision.down = false;
     }
@@ -196,14 +213,14 @@ ProtoGame.State.prototype =
   },
 
   deactivatePlatform: function(player, ledge) {
-    console.log('entrou');
+    //console.log('entrou');
     ledge.body.immovable = false;
     ledge.body.gravity.y = 1000
   },
 
   pauseGame: function() {
     game.paused = true;
-    console.log("pause");
+    //console.log("pause");
     // Then add the menu
     menu = game.add.sprite(width / 2, height / 2, 'menu');
     menu.fixedToCamera = true;
