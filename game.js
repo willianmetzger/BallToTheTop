@@ -1,221 +1,215 @@
-let ProtoGame = {};
+let width = 600;
+let height = 800;
+this.ProtoGame = {};
+
 ProtoGame.State = function (game){
   //import Player from "./Classes/Player"
-
-  let width = 600;
-  let height = 800;
-
+  
   // Initialize the Phaser Game object and set default game window size
-  const game = new Phaser.Game(width, height, Phaser.CANVAS, 'Ball To The Top', {
-    preload: preload,
-    create: create,
-    update: update })
-
   // Declare shared variables at the top so all methods can access them
-  let score = 0;
-  let meters = 0;
-  let scoreText
-  let platforms
-  let diamonds
-  let cursors
-  let player
-  let pause_label
-  let menu
-  let deathText
+  this.score = 0;
+  this.meters = 0;
+  this.scoreText
+  this.platforms
+  this.diamonds
+  this.cursors
+  this.player
+  this.pause_label
+  this.menu
+  this.deathText
 }
-
 
 ProtoGame.State.prototype =
 {
   preload: function ()  {
     // Load & Define our game assets
-    game.stage.backgroundColor = '#00FFFF';
-    game.load.image('sky', 'Assets/sky.png');
-    game.load.image('ground', 'Assets/platform.png');
-    game.load.image('diamond', 'Assets/diamond.png');
-    game.load.spritesheet('woof', 'Assets/woof.png', 32, 32);
-    game.load.image('menu', 'Assets/number-buttons-90x90.png', 270, 180);
-    game.load.audio('sfx', 'Assets/sounds/jump_bit.wav');
+    this.game.stage.backgroundColor = '#00FFFF';
+    this.game.load.image('sky', 'Assets/sky.png');
+    this.game.load.image('ground', 'Assets/platform.png');
+    this.game.load.image('diamond', 'Assets/diamond.png');
+    this.game.load.spritesheet('woof', 'Assets/woof.png', 32, 32);
+    this.game.load.image('menu', 'Assets/number-buttons-90x90.png', 270, 180);
+    this.game.load.audio('sfx', 'Assets/sounds/jump_bit.wav');
     //player = new Player(game)
   },
 
   create: function () {
 
     //  Make the world larger than the actual canvas
-    game.world.setBounds(0, 0, 0, 3000);
+    this.game.world.setBounds(0, 0, 0, 3000);
 
       //  We're going to be using physics, so enable the Arcade Physics system
-    game.physics.startSystem(Phaser.Physics.ARCADE)
+    this.game.physics.startSystem(Phaser.Physics.ARCADE)
 
       //  A simple background for our game
-    game.add.tileSprite(0, 0, 3000, 3000, 'sky')
+    this.game.add.tileSprite(0, 0, 3000, 3000, 'sky')
 
       //  The platforms group contains the ground and the 2 ledges we can jump on
-    platforms = game.add.group()
+    this.platforms = this.game.add.group()
 
       //  We will enable physics for any object that is created in this group
-    platforms.enableBody = true
+    this.platforms.enableBody = true
 
       // Here we create the ground.
-    let ground = platforms.create(0, game.world.height - 64, 'ground')
+    this.ground = this.platforms.create(0, this.game.world.height - 64, 'ground')
 
       //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
-    ground.scale.setTo(3, 3)
+    this.ground.scale.setTo(3, 3)
 
       //  This stops it from falling away when you jump on it
-    ground.body.immovable = true
-    let ledge;
+    this.ground.body.immovable = true
+    this.ledge;
     for (var i = 0; i < 30; i++)
     {
-      ledge = platforms.create(game.world.randomX, game.world.randomY, 'ground')
-      ledge.body.immovable = true
-      ledge.body.checkCollision.down = false;
+      this.ledge = this.platforms.create(this.game.world.randomX, this.game.world.randomY, 'ground')
+      this.ledge.body.immovable = true
+      this.ledge.body.checkCollision.down = false;
     }
-      //  Now let's create two ledges
-    // let ledge = platforms.create(400, 450, 'ground')
+      //  Now this.'s create two ledges
+    // this. ledge = platforms.create(400, 450, 'ground')
     // ledge.body.immovable = true
 
     // ledge = platforms.create(-75, 350, 'ground')
     // ledge.body.immovable = false
 
       // The player and its settings
-    player = game.add.sprite(32, game.world.height - 150, 'woof')
+    this.player = this.game.add.sprite(32, this.game.world.height - 150, 'woof')
 
-    player.anchor.setTo(0.5, 0.5);
+    this.player.anchor.setTo(0.5, 0.5);
       //  We need to enable physics on the player
-    game.physics.arcade.enable(player)
+    this.game.physics.arcade.enable(this.player)
       //  Player physics properties. Give the little guy a slight bounce.
-    player.body.bounce.y = 0.2
-    player.body.gravity.y = 800
-    player.body.collideWorldBounds = true
+    this.player.body.bounce.y = 0.2
+    this.player.body.gravity.y = 800
+    this.player.body.collideWorldBounds = true
 
       //  Our two animations, walking left and right.
-    player.animations.add('left', [0, 1], 10, true)
-    player.animations.add('right', [2, 3], 10, true)
+    this.player.animations.add('left', [0, 1], 10, true)
+    this.player.animations.add('right', [2, 3], 10, true)
 
       //  Finally some diamonds to collect
-    diamonds = game.add.group()
+    this.diamonds = this.game.add.group()
 
       //  Enable physics for any object that is created in this group
-    diamonds.enableBody = true
+    this.diamonds.enableBody = true
 
       //  Create 12 diamonds evenly spaced apart
     for (var i = 0; i < 12; i++) {
-      let diamond = diamonds.create(i * 70, 0, 'diamond')
+      this.diamond = this.diamonds.create(i * 70, 0, 'diamond')
 
         //  Drop em from the sky and bounce a bit
-      diamond.body.gravity.y = 1000
-      diamond.body.bounce.y = 0.3 + Math.random() * 0.2
+      this.diamond.body.gravity.y = 1000
+      this.diamond.body.bounce.y = 0.3 + Math.random() * 0.2
     }
 
       //  Create the score text
-    scoreText = game.add.text(16, 16, '', { fontSize: '32px', fill: '#000', align: "center" });
-    scoreText.fixedToCamera = true;
-    scoreText.text = 'Score: ' + score;
+    this.scoreText = this.game.add.text(16, 16, '', { fontSize: '32px', fill: '#000', align: "center" });
+    this.scoreText.fixedToCamera = true;
+    this.scoreText.text = 'Score: ' + this.score;
     //scoreText.cameraOffset.setTo(200, 500);
 
     // Create sounds
-    fx = game.add.audio('sfx');
+    this.fx = this.game.add.audio('sfx');
 
-    fx.addMarker('jump_bit', 0, 1.0);
+    this.fx.addMarker('jump_bit', 0, 1.0);
 
-    game.camera.y = player.y;
+    this.game.camera.y = this.player.y;
 
       //  And bootstrap our controls
-    cursors = game.input.keyboard.createCursorKeys();
-    pauseMenu();
+    this.cursors = this.game.input.keyboard.createCursorKeys();
+    this.pauseMenu();
 
-    game.camera.y = player.y;
+    this.game.camera.y = this.player.y;
   },
 
   update:function () {
       //  We want the player to stop when not moving
-    player.body.velocity.x = 0
+    this.player.body.velocity.x = 0
 
     //game.camera.speed = -2;
 
       //  Setup collisions for the player, diamonds, and our platforms
-    game.physics.arcade.collide(player, platforms)
-    game.physics.arcade.collide(diamonds, platforms)
+    this.game.physics.arcade.collide(this.player, this.platforms)
+    this.game.physics.arcade.collide(this.diamonds, this.platforms)
 
       //  Call callectionDiamond() if player overlaps with a diamond
-    game.physics.arcade.overlap(player, diamonds, collectDiamond, null, this)
+    this.game.physics.arcade.overlap(this.player, this.diamonds, this.collectDiamond, null, this)
 
       // Configure the controls!
-    if (cursors.left.isDown) {
-      player.body.velocity.x = -150
-      player.animations.play('left')
+    if (this.cursors.left.isDown) {
+      this.player.body.velocity.x = -150
+      this.player.animations.play('left')
 
-    } else if (cursors.right.isDown) {
-      player.body.velocity.x = 150
-      player.animations.play('right')
+    } else if (this.cursors.right.isDown) {
+      this.player.body.velocity.x = 150
+      this.player.animations.play('right')
 
     } else {
       // If no movement keys are pressed, stop the player
-      player.animations.stop()
+      this.player.animations.stop()
     }
 
       //  This allows the player to jump!
-    if (player.body.touching.down) {
-      player.body.velocity.y = -800
-      fx.play('jump_bit',0.5);
+    if (this.player.body.touching.down) {
+      this.player.body.velocity.y = -800
+      this.fx.play('jump_bit',0.5);
     }
       // Show an alert modal when score reaches 120
-    if (score === 120) {
+    if (this.score === 120) {
       alert('You win!')
-      score = 0
+      this.score = 0
     }
 
       // Camera follow
-    if(player.y <= (game.camera.y + (height/2)))
+    if(this.player.y <= (this.game.camera.y + (height/2)))
     {
-      game.camera.follow(player, Phaser.Camera.FOLLOW_TOPDOWN);
+      this.game.camera.follow(this.player, Phaser.Camera.FOLLOW_TOPDOWN);
     }
     else
     {
-      game.camera.follow(null);
+      this.game.camera.follow(null);
     }
 
       // Player death outside camera
-    if  (player.y > game.camera.y + height)
+    if  (this.player.y > this.game.camera.y + height)
     {
-        deathText = game.add.text(width * 0.42, height * 0.42, 'You Died', { fontSize: '32px', fill: '#000', align: "center" });
-        deathText.fixedToCamera = true;
-        gameOver();
+      this.deathText = this.game.add.text(width * 0.42, height * 0.42, 'You Died', { fontSize: '32px', fill: '#000', align: "center" });
+      this.deathText.fixedToCamera = true;
+      this.gameOver();
     }
   },
 
   mainMenu: function() {
-    game.state.add("")
+    this.game.state.add("")
   },
 
   pauseMenu:function () {
     // Create a label to use as a button
-    pause_label = game.add.text(width*0.85, height*0.02, 'Pause', {align: 'center', font: '24px Arial', fill: '#fff' });
-    pause_label.fixedToCamera = true;
-    pause_label.inputEnabled = true;
-    pause_label.events.onInputUp.add(function () {
+    this.pause_label = this.game.add.text(width*0.85, height*0.02, 'Pause', {align: 'center', font: '24px Arial', fill: '#fff' });
+    this.pause_label.fixedToCamera = true;
+    this.pause_label.inputEnabled = true;
+    this.pause_label.events.onInputUp.add(function (game = this.game) {
         // When the paus button is pressed, we pause the game
-        game.paused = true;
+        this.game.paused = true;
 
         // Then add the menu
-        menu = game.add.sprite(width / 2, height / 2, 'menu');
-        menu.fixedToCamera = true;
-        menu.anchor.setTo(0.5, 0.5);
+        this.menu = this.game.add.sprite(width / 2, height / 2, 'menu');
+        this.menu.fixedToCamera = true;
+        this.menu.anchor.setTo(0.5, 0.5);
 
         // And a label to illustrate which menu item was chosen. (This is not necessary)
-        choiseLabel = game.add.text(width / 2, height - 150, 'Click outside menu to continue', { font: '30px Arial', fill: '#fff' });
-        choiseLabel.fixedToCamera = true;
-        choiseLabel.anchor.setTo(0.5, 0.5);
+        this.choiseLabel = this.game.add.text(width / 2, height - 150, 'Click outside menu to continue', { font: '30px Arial', fill: '#fff' });
+        this.choiseLabel.fixedToCamera = true;
+        this.choiseLabel.anchor.setTo(0.5, 0.5);
     });
 
     // Add a input listener that can help us return from being paused
-    game.input.onDown.add(unpause, self);
+    this.game.input.onDown.add(unpause, self);
 
     // And finally the method that handels the pause menu
-    function unpause(event){
+    function unpause(event, game = this.game){
       // Only act if paused
-      if(game.paused){
+      if(this.game.paused){
           // Calculate the corners of the menu
           var x1 = width / 2 - 270 / 2, x2 = width / 2 + 270 / 2,
               y1 = height / 2 - 180 / 2, y2 = height / 2 + 180 / 2;
@@ -233,47 +227,53 @@ ProtoGame.State.prototype =
               var choise = Math.floor(x / 90) + 3*Math.floor(y / 90);
 
               // Display the choice
-              choiseLabel.text = 'You chose menu item: ' + choisemap[choise];
+              this.choiseLabel.text = 'You chose menu item: ' + choisemap[choise];
           }
           else{
               // Remove the menu and the label
-              menu.destroy();
-              choiseLabel.destroy();
+              this.menu.destroy();
+              this.choiseLabel.destroy();
 
               // Unpause the game
-              game.paused = false;
+              this.game.paused = false;
           }
       }
     };
   },
 
-  collectDiamond: function (player, diamond) {
+  collectDiamond:  function (player, diamond) {
       // Removes the diamond from the screen
-    diamond.kill()
+      this.diamond.kill()
 
       //  And update the score
-    score += 10
-    scoreText.text = 'Score: ' + score
+      this.score += 10
+      this.scoreText.text = 'Score: ' + this.score
   },
 
 
   gameOver: function()   
   {
-    player.kill();
-    this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    label = game.add.text(width / 2 , height / 2, 'Score: '+score+'\nGAME OVER\nPress SPACE to restart',{ font: '22px Lucida Console', fill: '#fff', align: 'center'}); 
-    label.fixedToCamera = true;   
-    label.anchor.setTo(0.5, 0.5);  
+    this.player.kill();
+    this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    this.label = this.game.add.text(width / 2 , height / 2, 'Score: '+this.score+'\nGAME OVER\nPress SPACE to restart',{ font: '22px Lucida Console', fill: '#fff', align: 'center'}); 
+    this.label.fixedToCamera = true;   
+    this.label.anchor.setTo(0.5, 0.5);  
     if(this.spaceKey.isDown)
     {
-      restart();
+      this.restart();
       
     }
   },
 
   restart: function() 
   {
-    score = 0; 
-    create(); 
+    this.score = 0; 
+    this.game.state.start('State'); 
   }
 };
+
+const game = new Phaser.Game(width, height, Phaser.CANVAS, 'Ball To The Top');
+
+game.state.add('State', ProtoGame.State);
+
+game.state.start('State');
