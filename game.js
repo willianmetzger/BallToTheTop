@@ -21,6 +21,8 @@ ProtoGame.State = function (game){
   this.falsePlatforms;
   this.minY = 100;
   this.minX = 100;
+  this.musicg;
+  this.jumpfx;
 }
 
 ProtoGame.State.prototype =
@@ -35,7 +37,10 @@ ProtoGame.State.prototype =
     this.game.load.spritesheet('woof', 'Assets/woof.png', 32, 32);
     this.game.load.image('menu', 'Assets/number-buttons-90x90.png', 270, 180);
     this.game.load.audio('sfx', 'Assets/sounds/jump_bit.wav');
+    this.game.load.audio('music', 'Assets/sounds/gameplay_music.mp3');
     //player = new Player(game)
+
+    
   },
 
   create: function () {
@@ -135,11 +140,14 @@ ProtoGame.State.prototype =
     this.scoreText.text = 'Score: ' + this.score;
     //scoreText.cameraOffset.setTo(200, 500);
 
-    // Create sounds
-    this.fx = this.game.add.audio('sfx');
+      //  Create sounds
+    this.jumpfx = this.game.add.audio('sfx');
+    this.jumpfx.addMarker('jump_bit', 0, 1.0, 0.5,false);
+    this.musicg = this.game.add.audio('music');
+    this.musicg.addMarker('musicg', 0, 70.0, 0.8, true);
+    this.musicg.play();
 
-    this.fx.addMarker('jump_bit', 0, 1.0);
-
+      //  Adjust the camera with the player
     this.game.camera.y = this.player.y;
 
       //  And bootstrap our controls
@@ -151,7 +159,7 @@ ProtoGame.State.prototype =
 
   update:function () {
       //  We want the player to stop when not moving
-    this.player.body.velocity.x = 0
+    this.player.body.velocity.x = 0;
 
     //game.camera.speed = -2;
 
@@ -181,7 +189,8 @@ ProtoGame.State.prototype =
       //  This allows the player to jump!
     if (this.player.body.touching.down) {
       this.player.body.velocity.y = -800
-      this.fx.play('jump_bit',0.5);
+      this.jumpfx.play('jump_bit',0.5);
+  
     }
       // Show an alert modal when score reaches 120
     if (this.score === 120) {
@@ -204,9 +213,11 @@ ProtoGame.State.prototype =
     {
       this.deathText = this.game.add.text(width * 0.42, height * 0.42, 'You Died', { fontSize: '32px', fill: '#000', align: "center" });
       this.deathText.fixedToCamera = true;
+      this.musicg.destroy = true;
       this.gameOver();
     }
-  },
+
+  }, 
 
   mainMenu: function() {
     this.game.state.add("")
@@ -292,10 +303,11 @@ ProtoGame.State.prototype =
   gameOver: function()   
   {
     this.player.kill();
+    this.musicg.stop();
     this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     this.label = this.game.add.text(width / 2 , height / 2, 'Score: '+this.score+'\nGAME OVER\nPress SPACE to restart',{ font: '22px Lucida Console', fill: '#fff', align: 'center'}); 
     this.label.fixedToCamera = true;   
-    this.label.anchor.setTo(0.5, 0.5);  
+    this.label.anchor.setTo(0.5, 0.5); 
     if(this.spaceKey.isDown)
     {
       this.restart();
@@ -306,6 +318,7 @@ ProtoGame.State.prototype =
   {
     this.score = 0; 
     this.game.state.start('State'); 
+    
   }
 };
 
