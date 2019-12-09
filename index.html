@@ -5,6 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>My Game</title>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.5.2/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+        https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.5.2/firebase-firestore.js"></script>
+
+    <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyC1nwfECzAMJSfviqqPabKExmergNWr_hM",
+        authDomain: "balltothetop-abfe0.firebaseapp.com",
+        databaseURL: "https://balltothetop-abfe0.firebaseio.com",
+        projectId: "balltothetop-abfe0",
+        storageBucket: "balltothetop-abfe0.appspot.com",
+        messagingSenderId: "108301361663",
+        appId: "1:108301361663:web:aedee872f4d6541516c7ca",
+        measurementId: "G-TEHYNVVM11"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+    const db = firebase.firestore();
+    </script>
     <script type="text/javascript" src="phaser.min.js"></script>
 </head>
 <body>
