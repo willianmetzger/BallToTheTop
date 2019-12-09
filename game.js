@@ -1,6 +1,7 @@
 let width = 600;
 let height = 800;
 this.ProtoGame = {};
+this.GameMenu ={};
 
 ProtoGame.State = function (game){
   //import Player from "./Classes/Player"
@@ -146,7 +147,7 @@ ProtoGame.State.prototype =
     this.jumpfx = this.game.add.audio('sfx');
     this.jumpfx.addMarker('jump_bit', 0, 1.0, 0.5,false);
     this.musicg = this.game.add.audio('music');
-    this.musicg.addMarker('musicg', 0, 70.0, 0.8, true);
+    this.musicg.addMarker('musicg', 0, 70.0, 0.7, true);
     this.musicg.play();
 
       //  Adjust the camera with the player
@@ -222,7 +223,11 @@ ProtoGame.State.prototype =
   }, 
 
   mainMenu: function() {
-    this.game.state.add("")
+    button = game.add.button(game.world.centerX - 95, 400, 'play_button', actionOnClick, this, 2, 1, 0);
+  },
+
+  actionOnClick: function(){
+
   },
 
   deactivatePlatform: function(player, ledge) {
@@ -235,12 +240,12 @@ ProtoGame.State.prototype =
     game.paused = true;
     //console.log("pause");
     // Then add the menu
-    menu = game.add.sprite(width / 2, height / 2, 'menu');
+    menu = game.add.sprite(width / 2, game.camera.y + 400, 'menu');
     menu.fixedToCamera = true;
     menu.anchor.setTo(0.5, 0.5);
 
     // And a label to illustrate which menu item was chosen. (This is not necessary)
-    choiseLabel = game.add.text(width / 2, height - 150, 'Click outside menu to continue', { font: '30px Arial', fill: '#fff' });
+    choiseLabel = game.add.text(width / 2, game.camera.y + 600, 'Click outside menu to continue', { font: '30px Arial', fill: '#fff' });
     choiseLabel.fixedToCamera = true;
     choiseLabel.anchor.setTo(0.5, 0.5);
   },
@@ -285,7 +290,7 @@ ProtoGame.State.prototype =
     this.pause_label.fixedToCamera = true;
     this.pause_label.inputEnabled = true;
     
-    // When the paus button is pressed, we pause the game
+    // When the pause button is pressed, we pause the game
     this.pause_label.events.onInputUp.add(this.pauseGame);
 
     // Add a input listener that can help us return from being paused
