@@ -36,9 +36,11 @@ ProtoGame.State.prototype =
     this.game.load.image('diamond', 'Assets/diamond.png');
     this.game.load.spritesheet('woof', 'Assets/woof.png', 32, 32);
     this.game.load.image('menu', 'Assets/number-buttons-90x90.png', 270, 180);
+    this.game.load.image('play_button', 'Assets/play_button.png');
+    this.game.load.image('play_button_clicked', 'Assets/play_button_clicked.png');
     this.game.load.audio('sfx', 'Assets/sounds/jump_bit.wav');
     this.game.load.audio('music', 'Assets/sounds/gameplay_music.mp3');
-    //player = new Player(game)
+    //player = new Player(game);
 
     
   },
