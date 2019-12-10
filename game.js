@@ -51,7 +51,7 @@ ProtoGame.State.prototype =
   create: function () {
 
     //  Make the world larger than the actual canvas
-    this.game.world.setBounds(0, 0, 0, 6000);
+    //this.game.world.setBounds(0, 0, 0, 6000);
 
       //  We're going to be using physics, so enable the Arcade Physics system
     this.game.physics.startSystem(Phaser.Physics.ARCADE)
@@ -225,6 +225,7 @@ ProtoGame.State.prototype =
     }
 
     this.plataformSpawner();
+    this.checkPlayerHeight(this.player.y);
   }, 
 
   mainMenu: function() {
@@ -241,27 +242,26 @@ ProtoGame.State.prototype =
     ledge.body.gravity.y = 1000;
   },
 
-  // checkPlayerHeight: function () {
-  //   if(this.player.y < 1000)
-  //   {
-  //     this.player.y += 4000;
-  //     this.playerLastPos += 4000;
-  //     this.plataforms.y += 4000;
-  //     this.falsePlataforms += 4000; 
-  //     this.game.camera.y += 4000;
-  //   }
-  // },
+  checkPlayerHeight: function (heightplayer) {
+    if(heightplayer < 350)
+    {
+      //this.player.y += 20 ;
+    //  this.playerLastPos += 4000;
+      this.platforms.y += 2;
+      this.falsePlatforms.y += 2; 
+    }
+  },
 
   plataformSpawner: function () {
-    if(this.playerLastPos - this.player.y >= 200)
+    if(this.player.y >= 200)
     {
-      console.log(this.player.y);
+     console.log(this.player.y);
       for (let index = 0; index < 2; index++) {     
         platType = getRandomInt(0, 1);
         if(platType == 0)
         {
           //newPlat = this.platforms.create(getRandomInt(0, width), this.platforms.children[this.platforms.length] - (getRandomInt(200, 300) * index), 'ground');
-          newPlat = this.platforms.create(300, game.camera.y, 'ground');
+          newPlat = this.platforms.create(300, this.player.y-400, 'ground');
           newPlat.body.immovable = true;
           newPlat.body.checkCollision.down = false;
           newPlat.scale.setTo(getRandomFloat(0.2, 1), 1);
@@ -269,16 +269,13 @@ ProtoGame.State.prototype =
         else
         {
           //newPlat = this.falsePlatforms.create(getRandomInt(0, width),  this.falsePlatforms.children[this.falsePlatforms.length] - (getRandomInt(200, 300) * index), 'breakingPlatform');
-          newPlat = this.falsePlatforms.create(300, game.camera.y, 'breakingPlatform');
+          newPlat = this.falsePlatforms.create(300, this.player.y-400, 'breakingPlatform');
           newPlat.body.immovable = true;
           newPlat.body.checkCollision.down = false;
           newPlat.scale.setTo(getRandomFloat(0.2, 1), 1);
         }
       }
     }
-    
-
-    //this.checkPlayerHeight;
   },
 
   triggerColEvent: function (player, platform) {
