@@ -1,3 +1,8 @@
+//get data
+db.collection('playerData').get().then(snapshot=>{
+  console.log(snapshot.docs)
+});
+
 // listen user status
 auth.onAuthStateChanged(user=>{
 
