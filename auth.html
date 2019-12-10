@@ -22,16 +22,16 @@
       </a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
           <li class="logged-in">
-            <a href="#" class="grey-text modal-trigger" data-target="modal-account">Account</a>
+            <a href="#"role=button data-toggle="modal" class="grey-text modal-trigger" data-target="#modal-account">Account</a>
           </li>
           <li class="logged-in">
-            <a href="#" class="grey-text" id="logout">Logout</a>
+            <a href="#"role=button data-toggle="modal" class="grey-text" id="logout">Logout</a>
           </li>
           <li class="logged-in">
-            <a href="#" class="grey-text modal-trigger" data-target="modal-create">Create Guide</a>
+            <a href="#"role=button data-toggle="modal" class="grey-text modal-trigger" data-target="#modal-create">Create Guide</a>
           </li>
           <li class="logged-out">
-            <a href="#" class="grey-text modal-trigger" data-target="modal-login">Login</a>
+            <a href="#"role=button data-toggle="modal" class="grey-text modal-trigger" data-target="#modal-login">Login</a>
           </li>
           <li class="logged-out">
             <a href="#" role=button data-toggle="modal" class="grey-text modal-trigger" data-target="#modal-signup">Sign up</a>
@@ -133,10 +133,14 @@
   <script>
     // Initialize Firebase
     var config = {
-      apiKey: "AIzaSyDlDUJhsP0_uh-YpaRfTOhWZsyY_hLukTw",
-      authDomain: "net-ninja-sandbox.firebaseapp.com",
-      databaseURL: "https://net-ninja-sandbox.firebaseio.com",
-      projectId: "net-ninja-sandbox"
+      apiKey: "AIzaSyC1nwfECzAMJSfviqqPabKExmergNWr_hM",
+        authDomain: "balltothetop-abfe0.firebaseapp.com",
+        databaseURL: "https://balltothetop-abfe0.firebaseio.com",
+        projectId: "balltothetop-abfe0",
+        storageBucket: "balltothetop-abfe0.appspot.com",
+        messagingSenderId: "108301361663",
+        appId: "1:108301361663:web:aedee872f4d6541516c7ca",
+        measurementId: "G-TEHYNVVM11"
     };
     firebase.initializeApp(config);
     
