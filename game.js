@@ -197,6 +197,8 @@ ProtoGame.State.prototype =
     if (this.player.body.touching.down) {
       this.player.body.velocity.y = -800
       this.jumpfx.play('jump_bit',0.5);
+      this.plataformSpawner();
+      this.checkPlayerHeight(this.player.y);
   
     }
       // Show an alert modal when score reaches 120
@@ -224,8 +226,8 @@ ProtoGame.State.prototype =
       this.gameOver();
     }
 
-    this.plataformSpawner();
-    this.checkPlayerHeight(this.player.y);
+    //this.plataformSpawner();
+    //this.checkPlayerHeight(this.player.y);
   }, 
 
   mainMenu: function() {
@@ -243,7 +245,7 @@ ProtoGame.State.prototype =
   },
 
   checkPlayerHeight: function (heightplayer) {
-    if(heightplayer < 350)
+    if(heightplayer < 300)
     {
       //this.player.y += 20 ;
     //  this.playerLastPos += 4000;
