@@ -3,6 +3,7 @@ let height = 800;
 this.ProtoGame = {};
 this.GameMenu ={};
 
+
 ProtoGame.State = function (game){
   //import Player from "./Classes/Player"
   
@@ -149,10 +150,10 @@ ProtoGame.State.prototype =
 
       //  Create sounds
     this.jumpfx = this.game.add.audio('sfx');
-    this.jumpfx.addMarker('jump_bit', 0, 1.0, 0.5,false);
+    this.jumpfx.addMarker('jump_bit', 0, 1.0, 0.4,false);
     this.musicg = this.game.add.audio('music');
     this.musicg.addMarker('musicg', 0, 70.0, 0.7, true);
-    //this.musicg.play();
+    this.musicg.play();
 
       //  Adjust the camera with the player
     this.game.camera.y = this.player.y;
@@ -235,6 +236,7 @@ ProtoGame.State.prototype =
       this.deathText = this.game.add.text(width * 0.42, height * 0.42, 'You Died', { fontSize: '32px', fill: '#000', align: "center" });
       this.deathText.fixedToCamera = true;
       this.musicg.destroy = true;
+      this.jumpfx.destroy = true;
       this.gameOver();
     }
   }, 
