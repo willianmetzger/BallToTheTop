@@ -21,11 +21,13 @@ ProtoGame.State = function (game){
   this.deathText
   this.fallLedges;
   this.falsePlatforms;
+  
   this.screenObjects = new Array;
   this.minY = 100;
   this.minX = 100;
   this.musicg;
   this.jumpfx;
+  this.background;
 }
 
 ProtoGame.State.prototype =
@@ -51,13 +53,14 @@ ProtoGame.State.prototype =
   create: function () {
 
     //  Make the world larger than the actual canvas
-    //this.game.world.setBounds(0, 0, 0, 6000);
+    //this.game.world.setBounds(0, 0, 0, null);
 
       //  We're going to be using physics, so enable the Arcade Physics system
     this.game.physics.startSystem(Phaser.Physics.ARCADE)
 
       //  A simple background for our game
-    this.game.add.tileSprite(0, 0, 6000, 6000, 'sky')
+    this.background = this.game.add.tileSprite(0, 0, 6000, 6000, 'sky')
+    this.background.fixedToCamera = true;
 
       //  The platforms group contains the ground and the 2 ledges we can jump on
     this.platforms = this.game.add.group()
@@ -82,11 +85,11 @@ ProtoGame.State.prototype =
       var newY;
 
       if (lastY == 0) {
-        newY = this.game.world.height - 250;
+        newY = this.game.world.height - 500;
         lastY = newY;
         //console.log('aaaa');
       } else {
-        var num = (this.game.world.randomY % 3 * -100);
+        var num = (this.game.world.randomY % 5 * -100) - i*150;
         //console.log(num)
         newY = lastY + num;
         // while((newY - lastY) > this.minY) {
@@ -95,7 +98,7 @@ ProtoGame.State.prototype =
         lastY = newY;
       }
 
-      this.ledge = this.platforms.create(this.game.world.randomX, newY, 'ground')
+      this.ledge = this.platforms.create(getRandomInt(0, width * 0.85), newY, 'ground')
       this.ledge.body.immovable = true
       this.ledge.body.checkCollision.down = false;
     }
@@ -110,15 +113,14 @@ ProtoGame.State.prototype =
     //   //this.fallLedges.body.tint = 0xff00ff;
     // }
       // The player and its settings
-    this.player = this.game.add.sprite(32, this.game.world.height - 150, 'woof')
+    this.player = this.game.add.sprite(width/2, this.game.world.height - 150, 'woof')
 
     this.player.anchor.setTo(0.5, 0.5);
       //  We need to enable physics on the player
     this.game.physics.arcade.enable(this.player)
       //  Player physics properties. Give the little guy a slight bounce.
     this.player.body.bounce.y = 0.2
-    this.player.body.gravity.y = 800
-    this.player.body.collideWorldBounds = true
+    this.player.body.gravity.y = 4000
 
       //  Our two animations, walking left and right.
     this.player.animations.add('left', [0, 1], 10, true)
@@ -150,7 +152,7 @@ ProtoGame.State.prototype =
     this.jumpfx.addMarker('jump_bit', 0, 1.0, 0.5,false);
     this.musicg = this.game.add.audio('music');
     this.musicg.addMarker('musicg', 0, 70.0, 0.7, true);
-    this.musicg.play();
+    //this.musicg.play();
 
       //  Adjust the camera with the player
     this.game.camera.y = this.player.y;
@@ -171,7 +173,7 @@ ProtoGame.State.prototype =
     //game.camera.speed = -2;
 
       //  Setup collisions for the player, diamonds, and our platforms
-    this.game.physics.arcade.collide(this.player, this.platforms, this.triggerColEvent)
+    this.game.physics.arcade.collide(this.player, this.platforms)
     this.game.physics.arcade.collide(this.player, this.falsePlatforms, this.deactivatePlatform)
     this.game.physics.arcade.collide(this.diamonds, this.platforms)
     this.game.physics.arcade.collide(this.diamonds, this.falsePlatforms)
@@ -181,11 +183,11 @@ ProtoGame.State.prototype =
 
       // Configure the controls!
     if (this.cursors.left.isDown) {
-      this.player.body.velocity.x = -150
+      this.player.body.velocity.x = -450
       this.player.animations.play('left')
 
     } else if (this.cursors.right.isDown) {
-      this.player.body.velocity.x = 150
+      this.player.body.velocity.x = 450
       this.player.animations.play('right')
 
     } else {
@@ -195,39 +197,46 @@ ProtoGame.State.prototype =
 
       //  This allows the player to jump!
     if (this.player.body.touching.down) {
-      this.player.body.velocity.y = -800
+      this.player.body.velocity.y = -1700
       this.jumpfx.play('jump_bit',0.5);
+      //this.checkPlayerHeight();
       this.plataformSpawner();
-      this.checkPlayerHeight(this.player.y);
-  
-    }
-      // Show an alert modal when score reaches 120
-    if (this.score === 120) {
-      alert('You win!')
-      this.score = 0
+      this.deletePostCamera();
+      this.playerLastPos = this.player.y;
     }
 
+    if(this.player.body.x > width - this.player.width)
+    {
+      this.player.body.x = width - this.player.width;
+    }
+    else if(this.player.body.x < 0)
+    {
+      this.player.body.x = 0;
+    }
+    if(this.player.body.y < 0)
+    {
+      this.player.body.y = 0;
+      this.player.body.velocity.y = 0;
+    }
       // Camera follow
-    if(this.player.y <= (this.game.camera.y + (height/2)))
-    {
-      this.game.camera.follow(this.player, Phaser.Camera.FOLLOW_TOPDOWN);
+      //this.game.camera.follow(this.player, Phaser.Camera.FOLLOW_TOPDOWN);
+    this.background.tilePosition.y -= 5;
+    if(this.player.body.velocity.y < 0  || this.player.y < this.game.camera.y - height*0.5){
+      this.platforms.forEach(platform => {
+        platform.body.velocity.y = 300;
+      });
+      this.falsePlatforms.forEach(platform => {
+        platform.body.velocity.y = 300;
+      });
     }
-    else
-    {
-      this.game.camera.follow(null);
-    }
-
       // Player death outside camera
-    if  (this.player.y > this.game.camera.y + height)
+    if  (this.player.y > height)
     {
       this.deathText = this.game.add.text(width * 0.42, height * 0.42, 'You Died', { fontSize: '32px', fill: '#000', align: "center" });
       this.deathText.fixedToCamera = true;
       this.musicg.destroy = true;
       this.gameOver();
     }
-
-    //this.plataformSpawner();
-    //this.checkPlayerHeight(this.player.y);
   }, 
 
   mainMenu: function() {
@@ -241,47 +250,44 @@ ProtoGame.State.prototype =
   deactivatePlatform: function(player, ledge) {
     //console.log('entrou');
     ledge.body.immovable = false;
-    ledge.body.gravity.y = 1000;
-  },
-
-  checkPlayerHeight: function (heightplayer) {
-    if(heightplayer < 300)
-    {
-      //this.player.y += 20 ;
-    //  this.playerLastPos += 4000;
-      this.platforms.y += 2;
-      this.falsePlatforms.y += 2; 
-    }
+    ledge.body.gravity.y = 10000;
   },
 
   plataformSpawner: function () {
-    if(this.player.y >= 200)
+    if(this.playerLastPos != this.player.body.y)
     {
-     console.log(this.player.y);
-      for (let index = 0; index < 2; index++) {     
-        platType = getRandomInt(0, 1);
-        if(platType == 0)
-        {
-          //newPlat = this.platforms.create(getRandomInt(0, width), this.platforms.children[this.platforms.length] - (getRandomInt(200, 300) * index), 'ground');
-          newPlat = this.platforms.create(300, this.player.y-400, 'ground');
-          newPlat.body.immovable = true;
-          newPlat.body.checkCollision.down = false;
-          newPlat.scale.setTo(getRandomFloat(0.2, 1), 1);
-        }
-        else
-        {
-          //newPlat = this.falsePlatforms.create(getRandomInt(0, width),  this.falsePlatforms.children[this.falsePlatforms.length] - (getRandomInt(200, 300) * index), 'breakingPlatform');
-          newPlat = this.falsePlatforms.create(300, this.player.y-400, 'breakingPlatform');
-          newPlat.body.immovable = true;
-          newPlat.body.checkCollision.down = false;
-          newPlat.scale.setTo(getRandomFloat(0.2, 1), 1);
-        }
+      platType = getRandomInt(0, 1);
+      if(platType == 0)
+      {
+        //newPlat = this.platforms.create(getRandomInt(0, width), this.platforms.children[this.platforms.length] - (getRandomInt(200, 300) * index), 'ground');
+        newPlat = this.platforms.create(getRandomInt(0, width * 0.85), game.camera.y - 75, 'ground');
+        newPlat.body.immovable = true;
+        newPlat.body.checkCollision.down = false;
+        newPlat.body.checkCollision.left = false;
+        newPlat.body.checkCollision.right = false;
+        newPlat.scale.setTo(getRandomInt(20, 85) / 100, 1);
+      }
+      else
+      {
+        //newPlat = this.falsePlatforms.create(getRandomInt(0, width),  this.falsePlatforms.children[this.falsePlatforms.length] - (getRandomInt(200, 300) * index), 'breakingPlatform');
+        newPlat = this.falsePlatforms.create(getRandomInt(0, width * 0.85), game.camera.y - 75, 'breakingPlatform');
+        newPlat.body.immovable = true;
+        newPlat.body.checkCollision.down = false;
+        newPlat.body.checkCollision.left = false;
+        newPlat.body.checkCollision.right = false;
+        newPlat.scale.setTo(getRandomInt(20, 100) / 100, 1);
       }
     }
   },
 
-  triggerColEvent: function (player, platform) {
-    this.playerLastPos = player.y;
+  deletePostCamera: function()
+  {
+    this.platforms.forEach(platform => {
+      if(platform.y > this.game.camera.y + height) { platform.kill() }
+    });
+    this.falsePlatforms.forEach(platform => {
+      if(platform.y > this.game.camera.y + height) { platform.kill() }
+    });
   },
 
   pauseGame: function() {
@@ -363,6 +369,13 @@ ProtoGame.State.prototype =
     this.label = this.game.add.text(width / 2 , height / 2, 'Score: '+this.score+'\nGAME OVER\nPress SPACE to restart',{ font: '22px Lucida Console', fill: '#fff', align: 'center'}); 
     this.label.fixedToCamera = true;   
     this.label.anchor.setTo(0.5, 0.5); 
+    this.background.tilePosition.y += 5;
+      this.platforms.forEach(platform => {
+        platform.body.velocity.y = 0;
+      });
+      this.falsePlatforms.forEach(platform => {
+        platform.body.velocity.y = 0;
+      });
     if(this.spaceKey.isDown)
     {
       this.restart();
@@ -381,10 +394,6 @@ function getRandomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function getRandomFloat(min, max) {
-  return Math.random() * (max - min) + min;
 }
 
 const game = new Phaser.Game(width, height, Phaser.CANVAS, 'Ball To The Top');
