@@ -15,11 +15,13 @@ ProtoGame.State = function (game){
   this.diamonds
   this.cursors
   this.player
+  this.playerLastPos = 0;
   this.pause_label
   this.menu
   this.deathText
   this.fallLedges;
   this.falsePlatforms;
+  this.screenObjects = new Array;
   this.minY = 100;
   this.minX = 100;
   this.musicg;
@@ -75,7 +77,7 @@ ProtoGame.State.prototype =
     this.ground.body.immovable = true
     this.ledge;
     var lastY = 0;
-    for (var i = 0; i < 15; i++)
+    for (var i = 0; i < 3; i++)
     {
       var newY;
 
@@ -101,12 +103,12 @@ ProtoGame.State.prototype =
     // this.ledge = this.platforms.create(-75, 350, 'ground')
     // this.ledge.body.immovable = false
 
-    for (var i = 0; i < 50; i++) {
-      this.fallLedges = this.falsePlatforms.create(this.game.world.randomX, this.game.world.randomY, 'breakingPlatform');
-      this.fallLedges.body.immovable = true;
-      this.fallLedges.body.checkCollision.down = false;
-      //this.fallLedges.body.tint = 0xff00ff;
-    }
+    // for (var i = 0; i < 50; i++) {
+    //   this.fallLedges = this.falsePlatforms.create(this.game.world.randomX, this.game.world.randomY, 'breakingPlatform');
+    //   this.fallLedges.body.immovable = true;
+    //   this.fallLedges.body.checkCollision.down = false;
+    //   //this.fallLedges.body.tint = 0xff00ff;
+    // }
       // The player and its settings
     this.player = this.game.add.sprite(32, this.game.world.height - 150, 'woof')
 
@@ -158,6 +160,8 @@ ProtoGame.State.prototype =
     this.pauseMenu();
 
     this.game.camera.y = this.player.y;
+
+    this.playerLastPos = this.player.y;
   },
 
   update:function () {
@@ -167,7 +171,7 @@ ProtoGame.State.prototype =
     //game.camera.speed = -2;
 
       //  Setup collisions for the player, diamonds, and our platforms
-    this.game.physics.arcade.collide(this.player, this.platforms)
+    this.game.physics.arcade.collide(this.player, this.platforms, this.triggerColEvent)
     this.game.physics.arcade.collide(this.player, this.falsePlatforms, this.deactivatePlatform)
     this.game.physics.arcade.collide(this.diamonds, this.platforms)
     this.game.physics.arcade.collide(this.diamonds, this.falsePlatforms)
@@ -220,6 +224,7 @@ ProtoGame.State.prototype =
       this.gameOver();
     }
 
+    this.plataformSpawner();
   }, 
 
   mainMenu: function() {
@@ -233,7 +238,51 @@ ProtoGame.State.prototype =
   deactivatePlatform: function(player, ledge) {
     //console.log('entrou');
     ledge.body.immovable = false;
-    ledge.body.gravity.y = 1000
+    ledge.body.gravity.y = 1000;
+  },
+
+  // checkPlayerHeight: function () {
+  //   if(this.player.y < 1000)
+  //   {
+  //     this.player.y += 4000;
+  //     this.playerLastPos += 4000;
+  //     this.plataforms.y += 4000;
+  //     this.falsePlataforms += 4000; 
+  //     this.game.camera.y += 4000;
+  //   }
+  // },
+
+  plataformSpawner: function () {
+    if(this.playerLastPos - this.player.y >= 200)
+    {
+      console.log(this.player.y);
+      for (let index = 0; index < 2; index++) {     
+        platType = getRandomInt(0, 1);
+        if(platType == 0)
+        {
+          //newPlat = this.platforms.create(getRandomInt(0, width), this.platforms.children[this.platforms.length] - (getRandomInt(200, 300) * index), 'ground');
+          newPlat = this.platforms.create(300, game.camera.y, 'ground');
+          newPlat.body.immovable = true;
+          newPlat.body.checkCollision.down = false;
+          newPlat.scale.setTo(getRandomFloat(0.2, 1), 1);
+        }
+        else
+        {
+          //newPlat = this.falsePlatforms.create(getRandomInt(0, width),  this.falsePlatforms.children[this.falsePlatforms.length] - (getRandomInt(200, 300) * index), 'breakingPlatform');
+          newPlat = this.falsePlatforms.create(300, game.camera.y, 'breakingPlatform');
+          newPlat.body.immovable = true;
+          newPlat.body.checkCollision.down = false;
+          newPlat.scale.setTo(getRandomFloat(0.2, 1), 1);
+        }
+      }
+    }
+    
+
+    //this.checkPlayerHeight;
+  },
+
+  triggerColEvent: function (player, platform) {
+    this.playerLastPos = player.y;
   },
 
   pauseGame: function() {
@@ -326,8 +375,18 @@ ProtoGame.State.prototype =
     this.score = 0; 
     this.game.state.start('State'); 
     
-  }
+  },
 };
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getRandomFloat(min, max) {
+  return Math.random() * (max - min) + min;
+}
 
 const game = new Phaser.Game(width, height, Phaser.CANVAS, 'Ball To The Top');
 
