@@ -440,7 +440,10 @@ ProtoGame.State.prototype =
   gameOver: function()   
   {
     this.player.kill();
-    navigator.vibrate(1000);
+    document.addEventListener("deviceready", onDeviceReady, false);
+  function onDeviceReady() {
+    console.log(navigator.vibrate(1000));
+  }
     this.platforms.forEach(platform => {platform.kill()});
     this.falsePlatforms.forEach(platform => {platform.kill()});
     this.slowPlatforms.forEach(platform => {platform.kill()});
