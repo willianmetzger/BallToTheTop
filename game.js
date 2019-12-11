@@ -3,6 +3,7 @@ let height = 800;
 this.ProtoGame = {};
 this.GameMenu ={};
 
+
 ProtoGame.State = function (game){
   //import Player from "./Classes/Player"
   
@@ -439,7 +440,7 @@ ProtoGame.State.prototype =
   gameOver: function()   
   {
     this.player.kill();
-
+    navigator.vibrate(1000);
     this.platforms.forEach(platform => {platform.kill()});
     this.falsePlatforms.forEach(platform => {platform.kill()});
     this.slowPlatforms.forEach(platform => {platform.kill()});
