@@ -204,7 +204,7 @@ ProtoGame.State.prototype =
     }
 
       // World movement
-    this.background.tilePosition.y -= 5;
+    this.background.tilePosition.y += 10;
     if(this.player.body.velocity.y < 0){
       this.platforms.forEach(platform => {
         platform.body.velocity.y = 400;
@@ -455,7 +455,7 @@ ProtoGame.State.prototype =
     this.label = this.game.add.text(width / 2 , height / 2, 'Score: '+this.score+'\nGAME OVER\nPress SPACE to restart',{ font: '22px Lucida Console', fill: '#fff', align: 'center'}); 
     this.label.fixedToCamera = true;   
     this.label.anchor.setTo(0.5, 0.5); 
-    this.background.tilePosition.y += 5;
+    this.background.tilePosition.y -= 10;
       this.platforms.forEach(platform => {
         platform.body.velocity.y = 0;
       });
